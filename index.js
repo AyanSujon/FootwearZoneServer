@@ -38,10 +38,10 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-     // All collection and Database
+    // All collection and Database
     const db = client.db("FootwearZone");
     const productsCollention = db.collection("products");
-
+    const testimonialsCollection = db.collection("testimonials");
 
 
 
@@ -54,30 +54,76 @@ async function run() {
 
 
 
-app.get('/api/products', async (req, res) => {
-  try {
-    const category = req.query.category;  // e.g. ?category=kids
+    app.get('/api/products', async (req, res) => {
+      try {
+        const category = req.query.category;  // e.g. ?category=kids
 
-    let query = {};
-    if (category) {
-      query.category = { $regex: `^${category}$`, $options: 'i' };
-    }
+        let query = {};
+        if (category) {
+          query.category = { $regex: `^${category}$`, $options: 'i' };
+        }
 
-    const result = await productsCollention.find(query).toArray();
-    res.send(result);
+        const result = await productsCollention.find(query).toArray();
+        res.send(result);
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Failed to fetch products" });
-  }
-});
-
-
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to fetch products" });
+      }
+    });
 
 
 
 
 
+
+    // GET all best seller products
+    app.get('/api/products/best-sellers', async (req, res) => {
+      try {
+        const bestSellers = await productsCollention.find({ bestSeller: true }).limit(8).toArray();
+        res.send(bestSellers);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to fetch best seller products" });
+      }
+    });
+
+
+
+    // GET all new arrival products (limit 8)
+    app.get('/api/products/new-arrivals', async (req, res) => {
+      try {
+        const newArrivals = await productsCollention
+          .find({})
+          .sort({ createdAt: -1 }) // newest first
+          .limit(8)                 // limit to 8 products
+          .toArray();
+
+        res.send(newArrivals);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to fetch new arrival products" });
+      }
+    });
+
+
+
+
+
+    // GET all new arrival products (limit 8)
+    app.get('/api/testimonials', async (req, res) => {
+      try {
+        const testimonials = await testimonialsCollection
+          .find({})
+          .sort({ createdAt: -1 }) // newest first
+          .toArray();
+
+        res.send(testimonials);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to fetch new arrival products" });
+      }
+    });
 
 
 
