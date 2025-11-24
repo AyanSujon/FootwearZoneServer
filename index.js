@@ -153,6 +153,68 @@ app.get('/api/products/:id', async (req, res) => {
 
 
 
+// Add Product API
+app.post('/api/products', async (req, res) => {
+  try {
+    // Get product data from request body
+    const { title, image, category, sizes, price, color, description } = req.body;
+
+    // Basic validation
+    if (!title || !image || !category || !price) {
+      return res.status(400).send({ error: "Title, image, category, and price are required" });
+    }
+
+    // Create new product object
+    const newProduct = {
+      title,
+      image,
+      category,
+      sizes: sizes || [],
+      price,
+      color: color || [],
+      description: description || "",
+      createdAt: new Date() // optional: track creation date
+    };
+
+    // Insert product into MongoDB
+    const result = await productsCollention.insertOne(newProduct);
+
+    // Return success response with the inserted product
+    res.status(201).send({ message: "Product added successfully", product: newProduct });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to add product" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
