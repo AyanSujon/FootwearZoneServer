@@ -126,9 +126,23 @@ async function run() {
     });
 
 
+// GET single product by ID
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const product = await productsCollention.findOne({ _id: new ObjectId(id) });
 
+    if (!product) {
+      return res.status(404).send({ error: "Product not found" });
+    }
 
+    res.send(product);
 
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Failed to fetch product" });
+  }
+});
 
 
 
