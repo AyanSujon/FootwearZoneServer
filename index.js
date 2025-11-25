@@ -173,11 +173,6 @@ app.get('/api/products/:id', async (req, res) => {
 
 
 
-
-
-
-
-
 // Add Product API
 app.post('/api/products', async (req, res) => {
   try {
@@ -210,6 +205,20 @@ app.post('/api/products', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Failed to add product" });
+  }
+});
+
+// DELETE a challenge (by ID)
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+
+    const result = await productsCollention.deleteOne(query);
+    res.send(result);
+  } catch (error) {
+    console.error("Error deleting challenge:", error);
+    res.status(500).send({ message: "Failed to delete challenge" });
   }
 });
 
