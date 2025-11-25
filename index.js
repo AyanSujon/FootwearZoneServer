@@ -40,6 +40,7 @@ async function run() {
 
     // All collection and Database
     const db = client.db("FootwearZone");
+    const usersCollention = db.collection("users");
     const productsCollention = db.collection("products");
     const testimonialsCollection = db.collection("testimonials");
 
@@ -51,6 +52,30 @@ async function run() {
     //   const result = await cursor.toArray();
     //   res.send(result);
     // })
+
+  // ALl Methords 
+
+
+    app.post('/api/users', async (req, res) => {
+      const newUser = req.body;
+      const email = req.body.email;
+      const query = { email: email }
+      const existingUser = await usersCollention.findOne(query);
+      if (existingUser) {
+       return  res.send({ message: 'User already exist, Do not need to insert again.' });
+      }
+      else {
+        const result = await usersCollention.insertOne(newUser);
+        return  res.send(result);
+
+      }
+    })
+
+
+
+
+
+
 
 
 
