@@ -227,6 +227,31 @@ app.delete('/api/products/:id', async (req, res) => {
 
 
 
+// UPDATE a product by ID
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateData = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).send({ message: "Invalid product ID" });
+    }
+
+    const result = await productsCollention.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    res.status(200).send({ message: "Product updated successfully" });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).send({ message: "Failed to update product" });
+  }
+});
 
 
 
